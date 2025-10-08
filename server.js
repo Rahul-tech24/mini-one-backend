@@ -1,6 +1,7 @@
 // Xe1640JSY2gwkEyi password
 //rahulrajput808160_db_user
 
+
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
@@ -54,10 +55,56 @@ app.post('/api/messages', async (req, res) => {
   res.status(201).json(m);
 });
 
+// Update a message
+app.put('/api/messages/:id', async (req, res) => {
+  const { id } = req.params;
+  const { text } = req.body;
+
+  if (!text || !text.trim()) {
+    return res.status(400).json({ error: 'Text required' });
+  }
+
+  try {
+    const updatedMessage = await Message.findByIdAndUpdate(
+      id,
+      { text: text.trim() },
+      { new: true } // return updated doc
+    );
+
+    if (!updatedMessage) {
+      return res.status(404).json({ error: 'Message not found' });
+    }
+
+    res.json(updatedMessage);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update message' });
+  }
+});
+
+// Delete a message
+app.delete('/api/messages/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deleted = await Message.findByIdAndDelete(id);
+
+    if (!deleted) {
+      return res.status(404).json({ error: 'Message not found' });
+    }
+
+    res.json({ message: 'Message deleted successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to delete message' });
+  }
+});
+
+
+
+
 // health
 app.get('/', (req, res) => res.send('API is running'));
-
-app.get('/health', (req, res) => res.json(" this is health check endpoint"));
 
 // Start
 app.listen(PORT, () => console.log(`🚀 Backend listening on http://localhost:${PORT}`));
