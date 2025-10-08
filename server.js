@@ -8,11 +8,24 @@ const cors = require('cors');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
-const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
+
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/mini-one';
 
 // Minimal middleware
-app.use(cors({ origin: CLIENT_ORIGIN }));
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://mini-one-frontend.vercel.app'
+];
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS not allowed'));
+    }
+  }
+}));
+
 app.use(express.json());
 
 // Minimal Mongoose model (inline for smallest footprint)
