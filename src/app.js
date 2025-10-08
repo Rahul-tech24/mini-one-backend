@@ -15,12 +15,19 @@ const app = express();
 
 
 // CORS allowlist from env
-const rawOrigins = process.env.CLIENT_ORIGINS || 'http://localhost:5173';
-const whitelist = rawOrigins.split(',').map(s => s.trim()).filter(Boolean);
-
+const allowedOrigins = process.env.CLIENT_ORIGINS?.split(",").map(o => o.trim()) || [];
 
 app.use(cors({
-  origin: ['https://mini-one-frontend.vercel.app'],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      console.log("❌ CORS blocked:", origin);
+      return callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
 }));
 
