@@ -44,6 +44,8 @@ app.post('/api/messages', async (req, res) => {
 // health
 app.get('/', (req, res) => res.send('API is running'));
 
+app.get('/health', (req, res) => res.json(" this is health check endpoint"));
+
 // Start
 app.listen(PORT, () => console.log(`🚀 Backend listening on http://localhost:${PORT}`));
 
