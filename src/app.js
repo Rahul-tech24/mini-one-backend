@@ -20,14 +20,10 @@ const whitelist = rawOrigins.split(',').map(s => s.trim()).filter(Boolean);
 
 
 app.use(cors({
-origin: (origin, callback) => {
-// allow non-browser clients (no origin)
-if (!origin) return callback(null, true);
-if (whitelist.length === 0 || whitelist.includes(origin)) return callback(null, true);
-callback(new Error('Not allowed by CORS'));
-},
-credentials: true
+  origin: ['https://mini-one-frontend.vercel.app'],
+  credentials: true,
 }));
+
 
 
 app.use(helmet());
