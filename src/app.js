@@ -11,31 +11,24 @@ const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
 
-// =========================
-// 🔥 CORS CONFIG
-// =========================
-const allowedOrigins = process.env.CLIENT_ORIGINS?.split(',').map(o => o.trim()) || [];
+const allowedOrigins = process.env.CLIENT_ORIGINS
+  ? process.env.CLIENT_ORIGINS.split(",").map(o => o.trim())
+  : ["http://localhost:5173"];
 
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin) return callback(null, true); // allow Postman/curl
+    // Allow requests with no origin (like Postman)
+    if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     } else {
-      console.warn('❌ CORS blocked:', origin);
-      return callback(new Error('Not allowed by CORS'));
+      console.log("❌ CORS blocked:", origin);
+      return callback(new Error("Not allowed by CORS"));
     }
   },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true, // this is key 🔥
 }));
 
-// ✅ Handle preflight OPTIONS manually for all routes
-app.options('*', cors({
-  origin: allowedOrigins,
-  credentials: true,
-}));
 
 // =========================
 // 🔒 SECURITY & LOGGING

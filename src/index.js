@@ -9,12 +9,11 @@ const PORT = process.env.PORT || 4000;
 
 (async function start() {
 try {
-const mongoUri = process.env.MONGO_URI;
-await connectDB(mongoUri);
+    await connectDB(process.env.MONGO_URI);
+    console.log("✅ MongoDB connected");
 
-
-const server = http.createServer(app);
-server.listen(PORT, () => console.log(`🚀 Server listening on port ${PORT}`));
+    const server = http.createServer(app);
+    server.listen(PORT, () => console.log(`🚀 Server listening on port ${PORT}`));
 
 
 const shutdown = async (signal) => {
